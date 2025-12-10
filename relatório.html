@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyMate</title>
+    <link rel="stylesheet" href="relatorio.css">
+</head>
+
+<body>
+
+    <!-- TOPBAR igual ao Dashboard -->
+    <div class="topbar">
+        <div class="topbar-inner">
+            <h1>MoneyMate</h1>
+            <img class="logo" src="Financas.jpeg" alt="logo" />
+
+            <div class="toolbar-buttons">
+                <button onclick="window.location.href='SaoLuis.html'">⬅ Voltar</button>
+                <button id="btnPdf">Gerar PDF</button>
+                <button onclick="logout()" class="logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <h2 class="title">Relatório Financeiro</h2>
+
+        <!-- FILTRO -->
+        <div class="filter-box">
+            <label>Mês:</label>
+            <select id="mesFiltro"></select>
+
+            <button id="btnFiltrar">Filtrar</button>
+        </div>
+
+        <!-- Cabeçalho da tabela do relatório -->
+        <div id="cabecalhoRelatorio" class="report-header" style="display:none;">
+            <h3 id="relatorioTitulo"></h3>
+            <p><strong>Mês:</strong> <span id="relatorioMes"></span></p>
+            <p><strong>Usuário:</strong> <span id="relatorioUsuario"></span></p>
+        </div>
+
+        <!-- Tabela principal -->
+        <table id="tabelaRelatorio" class="report-table" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Receitas</th>
+                    <th>Despesas</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaBody"></tbody>
+        </table>
+
+        <!-- Botão para adicionar nova linha -->
+        <button id="btnNovaLinha" class="add-btn" style="display:none;">
+            + Adicionar Receita / Despesa
+        </button>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="relatorio.js"></script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const monthFilter = document.getElementById("monthFilter");
+    const tableBody = document.getElementById("relatorioTabela"); 
+    // troque pelo ID da sua tabela
+
+    // Carrega tudo inicialmente
+    carregarRelatorio();
+
+    // Evento: quando escolher o mês
+    monthFilter.addEventListener("change", () => {
+        const selected = monthFilter.value; // retorna "2025-02"
+        if (!selected) {
+            carregarRelatorio();
+            return;
+        }
+
+        const [ano, mes] = selected.split("-");
+        filtrarRelatorio(Number(ano), Number(mes));
+    });
+
+    function carregarRelatorio() {
+        const dados = JSON.parse(localStorage.getItem("financeiro")) || [];
+        renderTabela(dados);
+    }
+
+    function filtrarRelatorio(ano, mes) {
+        const dados = JSON.parse(localStorage.getItem("financeiro")) || [];
+
+        const filtrados = dados.filter(item => {
+            if (!item.data) return false;
+
+            const dt = new Date(item.data);
+            return (
+                dt.getFullYear() === ano &&
+                dt.getMonth() + 1 === mes
+            );
+        });
+
+        renderTabela(filtrados);
+    }
+
+    function renderTabela(lista) {
+        tableBody.innerHTML = "";
+
+        if (lista.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4">Nenhum registro encontrado</td></tr>`;
+            return;
+        }
+
+        lista.forEach(item => {
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+                <td>${item.nome}</td>
+                <td>${item.valor}</td>
+                <td>${item.tipo}</td>
+                <td>${formatarData(item.data)}</td>
+            `;
+
+            tableBody.appendChild(tr);
+        });
+    }
+
+    function formatarData(d) {
+        const data = new Date(d);
+        return data.toLocaleDateString("pt-BR");
+    }
+});
+</script>
+
+</body>
+</html>
