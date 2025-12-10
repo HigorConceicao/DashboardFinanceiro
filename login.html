@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Controle Financeiro</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+  <div class="login-container">
+    <h2>MoneyMate</h2>
+
+    <div class="tabs">
+      <button id="btnLogin" class="active">Login</button>
+      <button id="btnRegister">Cadastrar</button>
+    </div>
+
+    <!-- LOGIN -->
+    <form id="loginForm" class="form active">
+      <input type="text" id="loginUser" placeholder="Usuário" required>
+      <input type="password" id="loginPass" placeholder="Senha" required>
+      <button type="submit" class="btn">Entrar</button>
+      <p id="loginError" class="error"></p>
+    </form>
+
+    <!-- CADASTRO -->
+    <form id="registerForm" class="form">
+      <input type="text" id="regUser" placeholder="Novo Usuário" required>
+      <input type="password" id="regPass" placeholder="Nova Senha" required>
+      <button type="submit" class="btn">Cadastrar</button>
+      <p id="registerError" class="error"></p>
+    </form>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
